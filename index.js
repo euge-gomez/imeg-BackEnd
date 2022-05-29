@@ -1,4 +1,5 @@
-// Definición de Clase Usuario con sus metodos y datos
+// Entrega 01 
+//Definición de Clase Usuario con sus metodos y datos
 
 class Usuario {
     constructor (nombre, apellido) {
