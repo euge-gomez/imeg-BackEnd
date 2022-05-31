@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Entrega nro 1 del curso de CoderHouse de Back End!",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
