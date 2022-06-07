@@ -1,5 +1,10 @@
 import fs from "fs"
 
+const infoBase = fs.readFile("./infoProductos.json", "utf-8", function(err, data){
+    console.log(data);
+    console.error(err);
+})
+
 class Contenedor {
 
     constructor (name) {
@@ -9,92 +14,95 @@ class Contenedor {
 //save(Object): Number - Recibe un objeto, lo guarda en el archivo, devuelve el id asignado.: 
 
     async save(info)  {
-        if (checkFileExists(this.fileName)) {
-            await fs.promises.readFile(this.fileName, "utf-8")
-            .then(producto => {
-                let content = JSON.parse(producto);
-                let lastId = content[content.length -1].id + 1;
-                info.id = lastId;
-                content.push(info);
-                fs.promises.writeFile(this.fileName, JSON.stringify(content))})
-            .catch(e => (console.error(e)));
-        } else {
-            info.id = 1;
-            let newId = [];
-            newId.push(info);
-            fs.promises.writeFile(this.fileName, JSON.stringify(newId))
-        }
+       const id = 0;
+       try {
+           const infoBD = JSON.parse(fs.promises.readFile("./infoProductos.json", "utf-8"));
+           let productos = infoBD;
+           productos.push(info);
+           productos.forEach((producto) => {
+               if (producto.id > id) {
+                   id = producto.id;
+               }
+           });
+           info.id = id + 1;
+           await fs.promises.writeFile("./productos.json", JSON.stringify(productos, null, 2));
+       } catch (error) {
+           throw new Error (`No se pudo guardar el archivo: ${error}`)
+       }
     }
 
 //getById(Number): Object - Recibe un id y devuelve el objeto con ese id, o null si no está.: 
 
     async getById(id) {
-        if(checkFileExists(this.fileName)) {
-            try {
-                let getId = await fs.promises.readFile(this.fileName, "utf-8");
-                if(getId) {
-                    let data = JSON.parse(data);
-                    return data.find((item) => item.id == id);
-                }
-            }catch (err) {
-                throw new Error(`No se puede obtener el Id: ${err}`)
+        try {
+            let getId = await fs.promises.readFile("./productos.json", "utf-8");
+            this.fileName = getId;
+            let producto = this.fileName.filter((producto) => producto.id === id);
+            if(producto) {
+               console.log(producto)
+            } else {
+                console.error("No existe producto buscado")
             }
-        }else {
-            alert(`No esta creado el archivo en que se aloja el id que buscas`)
+        }catch (err) {
+            throw new Error(`No se puede obtener el Id: ${err}`)
         }
     }
 
 //getAll(): Object[] - Devuelve un array con los objetos presentes en el archivo.: 
 
     async getAll() {
-        if(checkFileExists(this.fileName)) {
-            try {
-                let getAll = await fs.promises.readFile(this.fileName, "utf-8");
-                if(getAll) {
-                    let data = JSON.parse(getAll);
-                    return data;
-                }
-            }catch (err) {
-                throw new Error(`No se pueden obtener todos los Id: ${err}`)
+        try {
+            let getAll = await fs.promises.readFile("./producto.json", "utf-8");
+            let productos = getAll
+            if(productos.length) {
+                let allProducts = productos.localeCompare((producto) => producto);
+                console.log(allProducts);
+            }else {
+                console.error("No hay productos cargados")
             }
-        }else {
-            alert(`No esta creado el archivo en que buscas tus ids`)
+        }catch (err) {
+            throw new Error(`No se pueden obtener todos los productos: ${err}`)
         }
     }
 
 // deleteById(Number): void - Elimina del archivo el objeto con el id buscado:
 
     async deleteById(id) {
-        if(checkFileExists(this.fileName)) {
-            await fs.promises.readFile(this.fileName, "utf-8")
-               .then(productos => {
-                   let content = JSON.parse(productos)
-                   let deleteById = content.findIndex(item => item.id == id);
-                   content.splice(deleteById, 1);
-                   fs.promises.writeFile(this.fileName, JSON.stringify(content))
-               }).catch (error => (console.error(error))) 
-        }else {
-            alert(`No existe el archivo que posea ese Id`)
-        }
+        try {
+            const info = JSON.parse(await fs.promises.readFile("./productos.json", "utf-8"));
+            this.fileName = info;
+            let producto = this.fileName.filter((producto) => producto.id === id);
+            if(producto) {
+                this.fileName.delete(producto);
+                console.log(`Se ha eliminado el producto identificado con ${id} de la base de productos`)
+            } else {
+                console.error("No existe el producto buscado")
+            }
+        }catch (err) {
+            throw new Error(`No pudo borrarse el producto: ${err}`);
+        }           
     }
 
 // deleteAll(): void - Elimina todos los objetos presentes en el archivo.
 
     async deleteAll() {
-        if(checkFileExists(this.fileName)) {
-            await fs.promises.unlink(this.fileName)
+        const info = JSON.parse(await fs.promises.readFile("./productos.json", "utf-8"));
+        if(info.length) {
+            const baseProductos = info.map((producto) => producto);
+            this.fileName.delete(baseProductos);
         }else {
-            alert(`No esta creado el archivo que quiere borrar`)
+            alert(`No hay productos`)
         }
     }
-
 }
 
-async function checkFileExists(name) {
-    return await fs.promises.access(name, fs.constants.F_OK)
-        .then(() => true)
-        .catch(() => false)
+const contendor = new Contenedor(infoBase);
+
+const producto01 = {
+    "title": "Deo Roll On Todo día Invisible",
+    "price": 400,
+    "thumbnail": "https://www.natura.com.bo/sites/default/files/productos/73839.jpg"
 }
 
-const contenedor = new Contenedor("./productos.txt");
-contenedor.save("Deo Roll On Todo día Invisible", 400, "https://www.natura.com.bo/sites/default/files/productos/73839.jpg")
+await contendor.save(producto01)
+
