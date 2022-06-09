@@ -1,9 +1,6 @@
 import fs from "fs"
 
-const infoBase = fs.readFile("./infoProductos.json", "utf-8", function(err, data){
-    console.log(data);
-    console.error(err);
-})
+const infoBase = fs.readFileSync("./infoProductos.json", "utf-8")
 
 class Contenedor {
 
@@ -14,10 +11,10 @@ class Contenedor {
 //save(Object): Number - Recibe un objeto, lo guarda en el archivo, devuelve el id asignado.: 
 
     async save(info)  {
-       const id = 0;
+       let id = 0;
        try {
-           const infoBD = JSON.parse(fs.promises.readFile("./infoProductos.json", "utf-8"));
-           let productos = infoBD;
+           const infoBD = fs.readFileSync("./infoProductos.json", "utf-8");
+           let productos = JSON.parse(infoBD);
            productos.push(info);
            productos.forEach((producto) => {
                if (producto.id > id) {
@@ -99,10 +96,11 @@ class Contenedor {
 const contendor = new Contenedor(infoBase);
 
 const producto01 = {
+    "id" : 1,
     "title": "Deo Roll On Todo día Invisible",
     "price": 400,
     "thumbnail": "https://www.natura.com.bo/sites/default/files/productos/73839.jpg"
 }
 
-await contendor.save(producto01)
+contendor.save(producto01)
 
