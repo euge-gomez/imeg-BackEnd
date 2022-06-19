@@ -1,7 +1,3 @@
-    // PUT '/api/productos/:id' -> recibe y actualiza un producto según su id.
-    // DELETE '/api/productos/:id' -> elimina un producto según su id.
-
-
 import express from 'express';
 const { Router } = express
 
@@ -10,7 +6,7 @@ const router = Router();
 let productos = [];
 
 router
-    .route('/productos')
+    .route('/')
 // GET '/api/productos' -> devuelve todos los productos.
     .get((req, res) => {
         try {
@@ -42,20 +38,44 @@ router
         throw new Error (`No se pudo guardar el producto: ${error}`)
     };
     });
-router
-    .route('/productos/:id')
+ 
 // GET '/api/productos/:id' -> devuelve un producto según su id.
-    .get((res, req) => {
-        let prodId = Number(req.params.id);
-        console.log(prodId)
+    router
+    .route('/:id')
+    .get((req, res) => {
+        let prodId = req.params.id;
             if (isNaN(prodId)) {
                 res.json({ error: "El id debe ser un número"})
             }if (prodId === undefined) {
                 res.json({ error : 'Producto no encontrado' })
-            }let productoEncontrado = productos.find(x => x.id === prodId)
+            }let productoEncontrado = productos.find(x => x.id === Number(prodId))
             res.json({ productoEncontrado  })
     })
-
-
+// PUT '/api/productos/:id' -> recibe y actualiza un producto según su id.
+    .put((req, res) => {
+        let prodId = req.params.id;
+            if (isNaN(prodId)) {
+                res.json({ error: "El id debe ser un número"})
+            }if (prodId === undefined) {
+                res.json({ error : 'Producto no encontrado' })
+            }let productoEncontrado = productos.find(x => x.id === Number(prodId))
+            productoEncontrado.title = req.body.title;
+            productoEncontrado.price = req.body.price;
+            productoEncontrado.thumbnail = req.body.thumbnail;
+            productoEncontrado.id = prodId;
+    })
+  // DELETE '/api/productos/:id' -> elimina un producto según su id..
+    .delete((req, res) => {
+        let prodId = req.params.id;
+            if (isNaN(prodId)) {
+                res.json({ error: "El id debe ser un número"})
+            }if (prodId === undefined) {
+                res.json({ error : 'Producto no encontrado' })
+            } let productosRemanentes = productos.filter(x => x != Number(prodId))
+            res.json({
+                acción: `Producto borrado id nro: ${prodId}`,
+                productos: productosRemanentes
+                })
+    })
 
  export default router;
