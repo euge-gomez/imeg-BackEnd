@@ -1,0 +1,17 @@
+{
+  "name": "pug05",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server05.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1",
+    "pug": "^3.0.2"
+  }
+}
