@@ -1,0 +1,28 @@
+
+<div class="container">
+  <h2>Productos</h2>
+    {{#if ProductsQty}}
+        <table class="table">
+            <thead>
+              <tr>
+                  <th scope="col">Producto</th>
+                  <th scope="col">Precio</th>
+                  <th scope="col">Url Img</th>
+              </tr>
+            </thead>
+            <tbody>
+                {{#each Products}}
+                    <tr>
+                        <td>{{this.producto}}</td>
+                        <td>$ {{this.price}}</td>
+                        <td>
+                            <img height="50px" src={{this.url}} alt="img product">
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        {{else}}
+        <h2 style={color: 'orange'}>No se encontraron productos</h2>
+    {{/if}}
+</div>
