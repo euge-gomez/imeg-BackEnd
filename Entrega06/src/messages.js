@@ -18,9 +18,9 @@ class Mensajes {
         try {
             const all = await this.getAll()
             const search = all.find(res => res.id === id)
-            return search || { error: `mensaje no encontrado` }
+            return search || { error: `No existe el mensaje` }
         } catch (error) {
-            throw new Error(`Error al buscar: ${error}`)
+            throw new Error(`Error no se pudo realizar la busqueda: ${error}`)
         }
     }
 
@@ -34,7 +34,7 @@ class Mensajes {
             await fs.writeFile(this.route, JSON.stringify(all, null, 2))
             return save
         } catch (error) {
-            throw new Error(`Error al guardar: ${error}`)
+            throw new Error(`No se pudo guardar el mensaje: ${error}`)
         }
     }
 }

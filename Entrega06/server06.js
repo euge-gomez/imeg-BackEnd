@@ -17,13 +17,13 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static('./public'))
 
 app.get('/', (req, res) => {
-    res.sendFile('index.html', { root: import.meta.url })
+    res.sendFile('index.html', { root: __dirname })
 })
 
 io.on('connection', async (socket) => {
     console.log('Usuario conectado')
 
-    // PRODUCTOS
+    // Para ver los productos
     socket.emit('productos', productos.getAll())
 
     socket.on('actualizar', producto => {
@@ -31,7 +31,7 @@ io.on('connection', async (socket) => {
         io.sockets.emit('productos', productos.getAll())
     })
     
-    // MENSAJES
+    // Para ver los mensajes
     socket.emit('mensajes', await mensajes.getAll())
 
     socket.on('mensajeNuevo', async mensaje => {

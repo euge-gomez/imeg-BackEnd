@@ -5,7 +5,7 @@ const agregarProducto = document.getElementById('agregarProducto')
 agregarProducto.addEventListener('submit', e => {
     e.preventDefault()
     const producto = {
-        title: agregarProducto[0].value,
+        product: agregarProducto[0].value,
         price: agregarProducto[1].value,
         thumbnail: agregarProducto[2].value
     }
@@ -19,18 +19,17 @@ socket.on('productos', productos => {
     })
 })
 
-function vistaTabla(productos) {
-    return fetch('ListaProductos.hbs')
-        .then(res => res.text())
-        .then(resp => {
-            const plantilla = Handlebars.compile(resp)
-            // const html = plantilla({ productos })
-            const html = plantilla({
-                Products: productos,
-                ProductsQty: productos.length
-            })
-            return html
+async function vistaTabla(productos) {
+    return await fetch('listaProductos.hbs')
+    .then(res => res,text())
+    .then(resp => {
+        const plantilla = Handlebars.compile(resp)
+        const html = plantilla({
+        Products: productos,
+        ProductsQty: productos.length
         })
+        return html
+    })    
 }
 
 // MENSAJES
@@ -43,12 +42,12 @@ imprimirMensajes.addEventListener('submit', e => {
     e.preventDefault()
 
     const mensaje = {
-        autor: userName.value,
+        user: userName.value,
         msg: textoUser.value
     }
     socket.emit('mensajeNuevo', mensaje)
     imprimirMensajes.reset()
-    userName.focus()
+    textoUser.focus()
 })
 
 socket.on('mensajes', mensajes => {
@@ -60,7 +59,7 @@ function contenedorMensajes(mensajes) {
     return mensajes.map(mensaje => {
         return (`
             <div>
-                <b style="color:blue;">${mensaje.autor}</b>
+                <b style="color:blue;">${mensaje.user}</b>
                 [<span style="color:brown;">${mensaje.fyh}</span>] :
                 <i style="color:green;">${mensaje.msg}</i>
             </div>
@@ -68,14 +67,14 @@ function contenedorMensajes(mensajes) {
     }).join(" ")
 }
 
-inputUsuario.addEventListener('input', () => {
-    const correo = inputUsuario.value.length
-    const mensaje = inputMensaje.value.length
-    inputMensaje.disabled = !correo
-    botonMensaje.disabled = !correo || !mensaje
+userName.addEventListener('input', () => {
+    const usuario = userName.value.length
+    const mensaje = textoUser.value.length
+    userName.disabled = !usuario
+    botonMensaje.disabled = !usuario || !mensaje
 })
 
-inputMensaje.addEventListener('input', () => {
-    const mensaje = inputMensaje.value.length
+textoUser.addEventListener('input', () => {
+    const mensaje = textoUser.value.length
     botonMensaje.disabled = !mensaje 
 })
